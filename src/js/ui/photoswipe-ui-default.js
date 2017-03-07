@@ -1,3 +1,6 @@
+/*! PhotoSwipe Default UI - 4.1.1 - 2015-12-24
+* http://photoswipe.com
+* Copyright (c) 2015 Dmitry Semenov; */
 /**
 *
 * UI on top of main sliding area (caption, arrows, close button, etc.).
@@ -208,8 +211,8 @@ var PhotoSwipeUI_Default =
 			}
 
 			window.open(target.href, 'pswp_share', 'scrollbars=yes,resizable=yes,toolbar=no,'+
-										'location=yes,width=550,height=420,top=100,left=' + 
-										(window.screen ? Math.round(screen.width / 2 - 275) : 100)  );
+										'location=yes,width=400,height=732,top=100,left=' + 
+										(window.screen ? Math.round(screen.width / 2 - 200) : 100)  );
 
 			if(!_shareModalHidden) {
 				_toggleShareModal();
@@ -223,6 +226,10 @@ var PhotoSwipeUI_Default =
 				shareURL,
 				image_url,
 				page_url,
+				filename,
+				relative_url,
+				tmp_split,
+				hash_split,
 				share_text;
 
 			for(var i = 0; i < _options.shareButtons.length; i++) {
@@ -232,10 +239,19 @@ var PhotoSwipeUI_Default =
 				page_url = _options.getPageURLForShare(shareButtonData);
 				share_text = _options.getTextForShare(shareButtonData);
 
+				hash_split = page_url.split('#');
+				tmp_split = image_url.split('/');
+				filename = tmp_split[4].split('.');
+				relative_url = filename[0].split('_');
+
+
 				shareURL = shareButtonData.url.replace('{{url}}', encodeURIComponent(page_url) )
-									.replace('{{image_url}}', encodeURIComponent(image_url) )
-									.replace('{{raw_image_url}}', image_url )
-									.replace('{{text}}', encodeURIComponent(share_text) );
+									.replace('{{image_url}}', location.protocol+'//'+location.host+location.pathname + encodeURIComponent(image_url))
+									.replace('{{raw_image_url}}', location.protocol+'//'+location.host+location.pathname + image_url )
+									.replace('{{text}}', encodeURIComponent(share_text))
+									.replace('{{rnd}}', Math.floor((Math.random() * 100000000) + 1))
+									.replace('{{r_path}}', encodeURIComponent(hash_split[0] + 'pic/' + relative_url[0] + '/' + relative_url[1] + '/' + relative_url[2] + '/'))
+									.replace('{{hash}}', encodeURIComponent('#' + hash_split[1]));
 
 				shareButtonOut += '<a href="' + shareURL + '" target="_blank" '+
 									'class="pswp__share--' + shareButtonData.id + '"' +
